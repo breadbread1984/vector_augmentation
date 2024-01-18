@@ -14,9 +14,16 @@ def add_options():
 
 def main(unused_argv):
   vae = VAE()
-  trainset = tf.data.TFRecordDataset(FLAGS.dataset).map(parse_function).prefetch(FLAGS.batch_size).shuffle(FLAGS.batch_size).batch(FLAGS.batch_size)
-  vae.compile(optimizer = tf.keras.optimizers.Adam(FLAGS.lr), loss = lambda x, sample: tf.math.reduce_mean(-sample.log_prob(x)))
-  vae.fit(trainset, epochs = 15)
+  optimizer = tf.keras.optimizers.Adam(FLAGS.lr)
+  for epoch in range(200):
+    trainset = tf.data.TFRecordDataset(FLAGS.dataset).map(parse_function).prefetch(FLAGS.batch_size).shuffle(FLAGS.batch_size).batch(FLAGS.batch_size)
+    for x, label in trainset:
+      with tf.GradientTape() as tape:
+        sample = vae(x)
+        loss = tf.math.reduce_mean(-sample.log_prob(label))
+      print(loss)
+      grads = tape.gradient(loss, vae.trainable_variables)
+      optimizer.apply_gradients(zip(grads, vae.trainable_variables))
   vae.save_weights('vae.keras')
 
 if __name__ == "__main__":
