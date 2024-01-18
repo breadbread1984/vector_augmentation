@@ -19,7 +19,7 @@ def parse_function(serialized_example):
     })
   x = tf.io.parse_tensor(feature['x'], out_type = tf.float32)
   x = tf.reshape(x, (12,))
-  return x
+  return x, x
 
 def main(unused_argv):
   dataframe = openpyxl.load_workbook(FLAGS.input)
