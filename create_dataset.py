@@ -34,7 +34,7 @@ def main(unused_argv):
   data = tf.constant(np.transpose(data))
   writer = tf.io.TFRecordWriter(FLAGS.output)
   for sample in data:
-    trainsample = tf.train.Example(features = tf.train.Feature(
+    trainsample = tf.train.Example(features = tf.train.Features(
       feature = {
         'x': tf.train.Feature(bytes_list = tf.train.BytesList(value = [tf.io.serialize_tensor(sample).numpy()]))
       }))
