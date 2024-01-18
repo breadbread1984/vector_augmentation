@@ -14,7 +14,7 @@ def add_options():
 
 def main(unused_argv):
   vae = VAE()
-  trainset = tf.data.TFRecordDataset(FLAGS.dataset).map(parse_function).prefetch(FLAGS.batch_size).shuffle(FLAGS.batch_size)batch(FLAGS.batch_size)
+  trainset = tf.data.TFRecordDataset(FLAGS.dataset).map(parse_function).prefetch(FLAGS.batch_size).shuffle(FLAGS.batch_size).batch(FLAGS.batch_size)
   vae.compile(optimizer = tf.keras.optimizers.Adam(FLAGS.lr), loss = lambda x, sample: -sample.log_prob(x))
   vae.fit(trainset, epochs = 15)
   vae.save_weights('vae.keras')
